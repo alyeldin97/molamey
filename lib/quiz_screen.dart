@@ -5,45 +5,41 @@ import 'package:moalemy/reusables.dart';
 
 List<QuestionModel> questions = [
   QuestionModel(
-    question: "ما هو مؤنث عطشان؟ 0",
-    answers: ['عطشي','عطشانة','عطشي','عطشي'],
+    question: "ما هو مؤنث عطشان؟ ",
+    answers: ['عطشي', 'عطشانة', 'عطشي', 'عطشي'],
     correctAnswerIndex: 0,
   ),
   QuestionModel(
-    question: "ما هو مؤنث عطشان؟ 1",
-    answers: ['عطشي','عطشانة','عطشي','عطشي'],
+    question: "ما هو مذكر تعبانة؟ ",
+    answers: ['عطشي', 'عطشانة', 'عطشي', 'عطشي'],
     correctAnswerIndex: 1,
   ),
   QuestionModel(
-    question: "ما هو مؤنث عطشان؟ 2 ",
-    answers: ['عطشي','عطشانة','عطشي','عطشي'],
+    question: "ما هو مؤنث جعان؟ ",
+    answers: ['عطشي', 'عطشانة', 'عطشي', 'عطشي'],
     correctAnswerIndex: 2,
   ),
   QuestionModel(
-    question: "ما هو مؤنث عطشان؟ 3",
-    answers: ['عطشي','عطشانة','عطشي','عطشي'],
+    question: "ما هو مذكر طفشانة؟ ",
+    answers: ['عطشي', 'عطشانة', 'عطشي', 'عطشي'],
     correctAnswerIndex: 3,
   ),
-
 ];
 
 class QuizScreen extends StatefulWidget {
-
   @override
   State<QuizScreen> createState() => _QuizScreenState();
 }
 
 class _QuizScreenState extends State<QuizScreen> {
   bool correct = false;
-  int currentIndex=0;
+  int currentIndex = -1;
   QuestionModel question;
-
+  int duration = 3;
 
   @override
   Widget build(BuildContext context) {
-    question=questions[currentIndex];
-    CountDownController _controller = CountDownController();
-    int duration = 3;
+    question = currentIndex==-1? questions[0]:questions[currentIndex];
     return Container(
       decoration: BoxDecoration(
           image: DecorationImage(
@@ -67,28 +63,37 @@ class _QuizScreenState extends State<QuizScreen> {
                       Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(text: '1 ',style: TextStyle(
+                          text: TextSpan(children: [
+                            TextSpan(
+                              text: currentIndex==-1? '1':'${currentIndex+1}',
+                              style: TextStyle(
                                   fontFamily: 'English',
                                   fontSize: 33.0,
                                   color: Color(0xFFDB7E66),
-                                  fontWeight: FontWeight.bold),),
-                              TextSpan(text:'/',style: TextStyle(
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text: '/',
+                              style: TextStyle(
                                   fontFamily: 'English',
                                   fontSize: 20.0,
                                   color: Color(0xFF592043),
-                                  fontWeight: FontWeight.bold),),
-                              TextSpan(text: ' 4',style: TextStyle(
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text: ' 4',
+                              style: TextStyle(
                                   fontFamily: 'English',
                                   fontSize: 33.0,
                                   color: Color(0xFFDB7E66),
-                                  fontWeight: FontWeight.bold),),
-                            ]
-                          ),
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ]),
                         ),
                       ),
-                      SizedBox(width: 50,),
+                      SizedBox(
+                        width: 50,
+                      ),
                       Container(
                         child: CircularCountDownTimer(
                           // Countdown duration in Seconds.
@@ -98,7 +103,7 @@ class _QuizScreenState extends State<QuizScreen> {
                           initialDuration: 0,
 
                           // Controls (i.e Start, Pause, Resume, Restart) the Countdown Timer.
-                          controller: _controller,
+                          controller: controller,
 
                           // Width of the Countdown Widget.
                           width: MediaQuery.of(context).size.width / 4,
@@ -132,7 +137,6 @@ class _QuizScreenState extends State<QuizScreen> {
                           // Text Style for Countdown Text.
                           textStyle: TextStyle(
                               fontFamily: 'English',
-
                               fontSize: 33.0,
                               color: Color(0xFFDB7E66),
                               fontWeight: FontWeight.bold),
@@ -155,19 +159,20 @@ class _QuizScreenState extends State<QuizScreen> {
                           // This Callback will execute when the Countdown Starts.
                           onStart: () {
                             // Here, do whatever you want
-                            print('Countdown Started');
+                            //print('Countdown Started');
+                            if (currentIndex < questions.length-1) {
+                            setState(() {
+                              currentIndex += 1;
+                            });
+                            }
                           },
 
                           // This Callback will execute when the Countdown Ends.
                           onComplete: () {
                             // Here, do whatever you want
-                            print('Countdown Ended');
-                            setState(() {
-                              if(currentIndex<questions.length)
-                              currentIndex++;
-                            });
-                            _controller.start();
-
+                            if(currentIndex < questions.length-1)
+                            {controller.start();
+                            print('Countdown Ended');}
 
                           },
                         ),
@@ -183,11 +188,13 @@ class _QuizScreenState extends State<QuizScreen> {
                     textDirection: TextDirection.rtl,
                   ),
                   Column(
-                    children: questions.map((question){
+                    children: questions.map((question) {
                       return buildAnswer();
-                    } ).toList(),
+                    }).toList(),
                   ),
-
+                  TextButton(onPressed: () {
+                    controller.start();
+                  }, child: Text('Start')),
                 ],
               ),
             ),

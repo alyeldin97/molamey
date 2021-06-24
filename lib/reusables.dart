@@ -1,4 +1,8 @@
+import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
+
+
+CountDownController controller = CountDownController();
 
 //ANSWER WIDGET
 Widget buildAnswer({String answer}) {
